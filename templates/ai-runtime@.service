@@ -1,0 +1,27 @@
+[Unit]
+Description=AI Runtime for %i
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+Group=%i
+WorkingDirectory=/home/%i
+Environment=HOME=/home/%i
+Environment=AI_RUNTIME_USER=%i
+ExecStart=/home/%i/runtime/start.sh
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/%i /srv/ai-projects
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+[Install]
+WantedBy=multi-user.target
