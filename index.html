@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USwitch — User Switch AI Runtime</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --fg: #c9d1d9;
+            --accent: #58a6ff;
+            --green: #3fb950;
+            --border: #30363d;
+            --code-bg: #161b22;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        header {
+            padding: 80px 24px 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(180deg, #0d111700, #161b2240);
+        }
+        header h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+        header h1 span { color: var(--accent); }
+        header p {
+            font-size: 1.25rem;
+            color: #8b949e;
+            margin-top: 12px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .cta {
+            margin-top: 32px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .btn-primary { background: #238636; color: #fff; border: 1px solid #2ea043; }
+        .btn-primary:hover { background: #2ea043; }
+        .btn-outline { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+        .btn-outline:hover { background: #21262d; }
+        main {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        section { margin-bottom: 64px; }
+        section h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .feature {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .feature h3 { color: var(--accent); font-size: 1rem; margin-bottom: 8px; }
+        .feature p { color: #8b949e; font-size: 0.9rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { color: #8b949e; font-weight: 500; }
+        td:first-child { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace; color: var(--accent); white-space: nowrap; }
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        code { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace; }
+        pre code { color: var(--fg); }
+        pre .kw { color: #ff7b72; }
+        pre .str { color: #a5d6ff; }
+        footer {
+            text-align: center;
+            padding: 40px 24px;
+            color: #484f58;
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+        footer a { color: #58a6ff; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>U<span>Switch</span></h1>
+    <p>Isolate AI workloads per Linux user &mdash; switch contexts instantly.</p>
+    <div class="cta">
+        <a href="https://github.com/ibidathoillah/usw" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            View on GitHub
+        </a>
+        <a href="#install" class="btn btn-outline">Get Started</a>
+    </div>
+</header>
+
+<main>
+
+<section>
+    <h2>Features</h2>
+    <div class="features">
+        <div class="feature">
+            <h3>&#128274; Isolated Runtimes</h3>
+            <p>Each AI runtime runs as a dedicated Linux user with its own processes, systemd service, and configuration.</p>
+        </div>
+        <div class="feature">
+            <h3>&#128193; Workspace Attachment</h3>
+            <p>Bind your current working directory to a runtime with ACL-based permissions and symlinks.</p>
+        </div>
+        <div class="feature">
+            <h3>&#9881; Plugin System</h3>
+            <p>Discover and install AI tools — binaries, npm packages, pip packages, or shell scripts.</p>
+        </div>
+        <div class="feature">
+            <h3>&#128295; Environment Management</h3>
+            <p>Per-user <code>.env</code> files with isolated API keys and configuration per runtime.</p>
+        </div>
+        <div class="feature">
+            <h3>&#128737; Systemd Sandboxing</h3>
+            <p>Runtimes are managed as systemd units with <code>ProtectSystem=strict</code>, <code>NoNewPrivileges=yes</code>.</p>
+        </div>
+        <div class="feature">
+            <h3>&#9889; Atomic State</h3>
+            <p>State persisted to JSON with file locking, atomic writes, and <code>0o600</code> permissions.</p>
+        </div>
+    </div>
+</section>
+
+<section id="install">
+    <h2>Quick Start</h2>
+    <pre><code><span class="kw">make</span> build
+<span class="kw">sudo make</span> install
+
+<span class="kw">sudo usw</span> create myproject   <span class="str"># create a runtime</span>
+<span class="kw">sudo usw</span> myproject          <span class="str"># switch to it</span>
+<span class="kw">sudo usw</span> monitor            <span class="str"># see all runtimes</span>
+<span class="kw">sudo usw</span> install plugin-name <span class="str"># install tools</span>
+<span class="kw">sudo usw</span> env myproject set <span class="str">API_KEY=...</span></code></pre>
+</section>
+
+<section>
+    <h2>Commands</h2>
+    <table>
+        <thead>
+            <tr><th>Command</th><th>Aliases</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>usw &lt;user&gt;</td><td>&mdash;</td><td>Create or switch to a runtime</td></tr>
+            <tr><td>usw create &lt;user&gt;</td><td>c, mk, up, add, new</td><td>Create a new runtime</td></tr>
+            <tr><td>usw destroy &lt;user&gt;</td><td>d, rm, del</td><td>Remove a runtime</td></tr>
+            <tr><td>usw monitor [user]</td><td>m, ps, s</td><td>Show runtime status</td></tr>
+            <tr><td>usw kill [user]</td><td>k, stop</td><td>Stop runtime processes</td></tr>
+            <tr><td>usw purge [user]</td><td>x, clear, nuke</td><td>Completely remove all runtimes</td></tr>
+            <tr><td>usw plugin [name]</td><td>p, pl</td><td>List or inspect plugins</td></tr>
+            <tr><td>usw install [tool]</td><td>i, in</td><td>Install a plugin/tool</td></tr>
+            <tr><td>usw env &lt;user&gt;</td><td>e</td><td>Manage environment variables</td></tr>
+            <tr><td>usw current</td><td>&mdash;</td><td>Show active runtime</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Requirements</h2>
+    <ul style="color:#8b949e; padding-left: 20px; display:flex; flex-direction:column; gap:8px;">
+        <li>Linux (systemd-based distribution)</li>
+        <li><a href="https://rustup.rs">Rust toolchain</a> &mdash; for building from source</li>
+        <li>Root privileges</li>
+    </ul>
+</section>
+
+</main>
+
+<footer>
+    <p>USwitch is licensed under <a href="https://github.com/ibidathoillah/usw/blob/main/Cargo.toml">MIT</a> &middot;
+    <a href="https://github.com/ibidathoillah/usw">GitHub</a></p>
+</footer>
+
+</body>
+</html>
