@@ -1,8 +1,8 @@
-# usw — AI Runtime Switch
+# USwitch — User Switch AI Runtime
 
 > **1 Linux User = 1 AI Runtime (isolated)**
 
-`usw` is a system administration CLI that creates isolated per-user AI runtimes backed by systemd. Each runtime gets its own Linux user, home directory, environment variables, workspace attachments, and sandboxed service unit.
+`usw` (USwitch) is a system administration CLI that creates isolated per-user AI runtimes backed by systemd. Each runtime gets its own Linux user, home directory, environment variables, workspace attachments, and sandboxed service unit.
 
 ## Features
 
