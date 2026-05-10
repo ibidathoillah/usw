@@ -18,7 +18,7 @@ StandardError=journal
 # Allow sudo for privileged runtimes
 NoNewPrivileges=no
 ProtectSystem=strict
-ProtectHome=read-only
+ProtectHome=tmpfs
 ReadWritePaths=/home/%i /srv/ai-projects
 ProtectKernelTunables=yes
 ProtectKernelModules=yes

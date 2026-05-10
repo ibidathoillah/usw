@@ -65,13 +65,17 @@ sudo usw destroy myproject
 | `usw env <user>` | `e` | Manage environment variables |
 | `usw current` | — | Show active runtime |
 
-## How It Works
+## Workspace Attachment
+
+Workspaces are attached using bind mounts (not symlinks), making them automatically accessible from within the runtime at `/home/<user>/projects/<workspace-name>`. Bind mounts persist while the runtime is active and are cleaned up on destroy.
 
 1. `usw create <name>` creates a Linux user via `useradd`, sets up runtime directories under `/home/<name>/`, deploys plugin binaries to `/opt/ai-core/binaries/`, generates a `/home/<name>/runtime/start.sh` script, and registers the runtime in `/var/lib/usw/state.json`.
 
-2. The start script is executed by a systemd unit template (`ai-runtime@.service`) that sandboxes the runtime with `ProtectSystem=strict`, `NoNewPrivileges=yes`, and read-only home access.
+2. The start script is executed by a systemd unit template (`ai-runtime@.service`) that sandboxes the runtime with `ProtectSystem=strict`, `NoNewPrivileges=yes`, and tmpfs home (empty on each start).
 
 3. `usw <name>` stops any other active runtimes, starts (or restarts) the target runtime, then drops you into a login shell as that user via `su -l`.
+
+4. Workspaces are automatically mounted via bind mount at runtime startup.
 
 ## Requirements
 
@@ -107,7 +111,7 @@ src/
 ├── switch.rs        # Main switch logic (create-or-switch)
 ├── runtime.rs       # Systemd service management
 ├── user.rs          # Linux user creation/teardown + scripts
-├── project.rs       # Workspace attachment (ACL + symlinks)
+├── project.rs       # Workspace attachment (ACL + bind mount)
 ├── plugin.rs        # Plugin manifest loading + binary discovery
 ├── state.rs         # JSON state persistence with file locking
 └── commands/
