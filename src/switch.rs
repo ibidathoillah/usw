@@ -8,7 +8,7 @@ use crate::output;
 use anyhow::{Context, Result};
 use chrono::Utc;
 
-/// usw <user> — create if new, switch if exists
+/// usw use <user> — create if new, switch if exists
 pub fn run(username: &str) -> Result<()> {
     validate_username(username)
         .with_context(|| format!("invalid username: {username}"))?;
@@ -86,6 +86,15 @@ pub fn run(username: &str) -> Result<()> {
         // Regenerate start script now that binaries are known
         user::generate_start_script(&home, username)?;
 
+        let invoked_by_privileged = std::env::var("SUDO_USER").is_ok() || 
+                                   std::env::var("USER").map(|u| u == "root").unwrap_or(false);
+
+        if invoked_by_privileged {
+            output::print_arrow("Adding to sudoers…");
+            user::add_to_sudoers(username)?;
+            output::print_success(&format!("User '{}' added to sudoers", username));
+        }
+
         // Attach cwd as workspace
         output::print_arrow("Attaching workspace…");
         let proj_name = workspace.file_name()
@@ -137,6 +146,6 @@ pub fn current() -> Result<()> {
     }
 
     output::print_info("No active runtime");
-    output::print_bullet("Switch to a runtime: usw <user>");
+    output::print_bullet("Switch to a runtime: usw use <user>");
     Ok(())
 }

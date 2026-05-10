@@ -8,6 +8,7 @@ fn test_help_output() {
         .assert()
         .success()
         .stdout(predicate::str::contains("Quick switch"))
+        .stdout(predicate::str::contains("use"))
         .stdout(predicate::str::contains("create"))
         .stdout(predicate::str::contains("monitor"))
         .stdout(predicate::str::contains("install"))

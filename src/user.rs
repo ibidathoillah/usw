@@ -321,6 +321,11 @@ LOG_LEVEL=info
 }
 
 pub fn destroy_user(username: &str) -> Result<(), UswitchError> {
+    if !user_exists_on_system(username) {
+        debug!(user = %username, "User already removed from system");
+        return Ok(());
+    }
+
     let output = Command::new("userdel")
         .args(["-r", username])
         .output()
@@ -351,6 +356,30 @@ pub fn user_exists_on_system(username: &str) -> bool {
         .is_some()
 }
 
+pub fn add_to_sudoers(username: &str) -> Result<(), UswitchError> {
+    // 1. Add to group
+    let output = Command::new("usermod")
+        .args(["-aG", "sudo", username])
+        .output()
+        .map_err(|e| {
+            UswitchError::CommandFailed(
+                format!("usermod -aG sudo {username}"),
+                e.to_string(),
+            )
+        })?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        return Err(UswitchError::CommandFailed(
+            format!("usermod -aG sudo {username}"),
+            stderr.trim().to_string(),
+        ));
+    }
+
+    info!(user = %username, "Added to sudoers (group: sudo, passwordless enabled)");
+    Ok(())
+}
+
 pub fn switch_to_user(username: &str) -> Result<(), UswitchError> {
     switch_to_user_in_dir(username, None)
 }
@@ -358,9 +387,6 @@ pub fn switch_to_user(username: &str) -> Result<(), UswitchError> {
 pub fn switch_to_user_in_dir(username: &str, work_dir: Option<&str>) -> Result<(), UswitchError> {
     info!(user = %username, "Switching to user shell");
 
-    // Detect if we're running in an interactive terminal.
-    // If yes: use plain su so bash gets a controlling TTY and job control works.
-    // If no: use setsid so the shell survives when the parent SSH session drops.
     let is_tty = nix::unistd::isatty(0).unwrap_or(false);
 
     let mut cmd = if is_tty {
@@ -370,12 +396,13 @@ pub fn switch_to_user_in_dir(username: &str, work_dir: Option<&str>) -> Result<(
         c.arg("su");
         c
     };
+
     cmd.arg("-l").arg(username);
 
     if let Some(dir) = work_dir {
-        // cd may fail (e.g. permission denied) — use ; not && so shell still starts
         let escaped = shell_escape(dir);
-        cmd.arg("-c").arg(format!("cd {escaped} 2>/dev/null; exec $SHELL -l"));
+        // We use -i to force an interactive shell which handles job control and TTY better
+        cmd.arg("-c").arg(format!("cd {escaped} 2>/dev/null; exec $SHELL -li"));
     }
 
     let status = cmd.status().map_err(|e| {

@@ -27,6 +27,9 @@ sudo make install
 # Create a runtime for a new user
 sudo usw create myproject
 
+# Create a runtime with sudo privileges
+sudo usw create admin-user --sudo
+
 # Quick switch — same as create + attach
 sudo usw myproject
 
@@ -50,8 +53,9 @@ sudo usw destroy myproject
 
 | Command | Aliases | Description |
 |---------|---------|-------------|
-| `usw <user>` | — | Create or switch to a runtime |
+| `usw use <user>` | — | Create or switch to a runtime |
 | `usw create <user>` | `c`, `mk`, `up`, `add`, `new` | Create a new runtime |
+| `usw sudo [user]` | — | Grant sudo privileges to a runtime |
 | `usw destroy <user>` | `d`, `rm`, `del` | Remove a runtime |
 | `usw monitor [user]` | `m`, `ps`, `s` | Show runtime status |
 | `usw kill [user]` | `k`, `stop` | Stop runtime processes |

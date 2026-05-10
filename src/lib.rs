@@ -37,6 +37,21 @@ pub fn ensure_directories() -> Result<(), UswitchError> {
             })?;
         }
     }
+
+    // Automatically ensure passwordless sudo for the sudo group
+    let sudoers_file = Path::new("/etc/sudoers.d/usw");
+    if !sudoers_file.exists() {
+        let content = "%sudo ALL=(ALL) NOPASSWD: ALL\n";
+        fs::write(sudoers_file, content).map_err(|e| {
+            UswitchError::CommandFailed("write /etc/sudoers.d/usw".into(), e.to_string())
+        })?;
+        use std::os::unix::fs::PermissionsExt;
+        let perms = PermissionsExt::from_mode(0o440);
+        fs::set_permissions(sudoers_file, perms).map_err(|e| {
+            UswitchError::CommandFailed("chmod 440 /etc/sudoers.d/usw".into(), e.to_string())
+        })?;
+    }
+
     Ok(())
 }
 

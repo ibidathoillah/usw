@@ -9,7 +9,18 @@ const TEMPLATE_CONTENT: &str = include_str!("../templates/ai-runtime@.service");
 
 pub fn install_service_template() -> Result<(), UswitchError> {
     let path = Path::new(SERVICE_TEMPLATE);
+    let mut updated = false;
+
     if !path.exists() {
+        updated = true;
+    } else {
+        let existing = fs::read_to_string(path).unwrap_or_default();
+        if existing != TEMPLATE_CONTENT {
+            updated = true;
+        }
+    }
+
+    if updated {
         fs::write(path, TEMPLATE_CONTENT).map_err(|e| {
             UswitchError::CommandFailed(
                 format!("write {SERVICE_TEMPLATE}"),
@@ -34,7 +45,7 @@ pub fn install_service_template() -> Result<(), UswitchError> {
             )));
         }
 
-        info!("Systemd service template installed");
+        info!("Systemd service template installed/updated");
     }
     Ok(())
 }

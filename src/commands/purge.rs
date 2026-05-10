@@ -64,6 +64,8 @@ pub fn execute(args: PurgeArgs) -> Result<(), UswitchError> {
 
     let mut count = 0;
     let mut failed = 0;
+    let mut purged_names = Vec::new();
+
     for name in &targets {
         if validate_username(&name).is_err() {
             output::print_warning(&format!("Skipping invalid username in state: {name}"));
@@ -75,13 +77,18 @@ pub fn execute(args: PurgeArgs) -> Result<(), UswitchError> {
         }
         let _ = runtime::disable_service_instance(&name);
 
-        let _ = std::process::Command::new("killall")
-            .args(["-9", "-u", &name])
-            .output();
+        // Try to kill processes twice with a small delay
+        for _ in 0..2 {
+            let _ = std::process::Command::new("killall")
+                .args(["-9", "-u", &name])
+                .output();
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
 
         match user::destroy_user(&name) {
             Ok(()) => {
                 count += 1;
+                purged_names.push(name.clone());
                 output::print_success(&name);
             }
             Err(e) => {
@@ -92,7 +99,7 @@ pub fn execute(args: PurgeArgs) -> Result<(), UswitchError> {
     }
 
     State::with_lock(|state| {
-        for name in &targets {
+        for name in &purged_names {
             state.users.remove(name);
         }
         Ok(())

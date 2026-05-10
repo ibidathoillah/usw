@@ -32,6 +32,15 @@ pub fn execute(args: DestroyArgs) -> Result<(), crate::error::UswitchError> {
         }
 
         let _ = runtime::disable_service_instance(&args.user);
+
+        // Ensure all processes are dead before userdel
+        for _ in 0..2 {
+            let _ = std::process::Command::new("killall")
+                .args(["-9", "-u", &args.user])
+                .output();
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
+
         user::destroy_user(&args.user)?;
 
         state.users.remove(&args.user);

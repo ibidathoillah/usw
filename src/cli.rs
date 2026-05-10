@@ -6,7 +6,7 @@ use clap::{Parser, Subcommand, Args, ArgAction};
     version,
     about = "Switch AI runtimes (1 Linux user = 1 isolated runtime)",
     long_about = None,
-    after_help = "Quick switch:  usw <user>\n\nShortcuts:\n  usw c <user>   Create\n  usw d <user>   Destroy\n  usw m          Monitor\n  usw i          Install\n  usw p          Plugin\n  usw k          Kill\n  usw x          Purge\n  usw e <user>   Env",
+    after_help = "Quick switch:  usw use <user>\n\nShortcuts:\n  usw c <user>   Create\n  usw d <user>   Destroy\n  usw m          Monitor\n  usw i          Install\n  usw p          Plugin\n  usw k          Kill\n  usw x          Purge\n  usw e <user>   Env\n  usw su <user>  Sudo",
 )]
 pub struct Cli {
     #[arg(short, long, action = ArgAction::Count, global = true, help = "Verbose")]
@@ -18,6 +18,10 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Create or switch to a runtime
+    #[command(name = "use")]
+    Use(UseArgs),
+
     /// Create runtime
     #[command(aliases = ["c", "mk", "up", "add", "new"])]
     Create(CreateArgs),
@@ -49,6 +53,18 @@ pub enum Commands {
     /// Manage runtime environment variables
     #[command(name = "env", aliases = ["e"])]
     Env(EnvArgs),
+
+    /// Show active runtime
+    Current,
+
+    /// Grant sudo privileges to a runtime user
+    #[command(name = "sudo", aliases = ["su", "admin"])]
+    Sudo(SudoArgs),
+}
+
+#[derive(Args)]
+pub struct UseArgs {
+    pub user: String,
 }
 
 #[derive(Args)]
@@ -56,6 +72,8 @@ pub struct CreateArgs {
     pub name: String,
     #[arg(long)]
     pub no_start: bool,
+    #[arg(long, help = "Add user to sudoers group")]
+    pub sudo: bool,
 }
 
 #[derive(Args)]
@@ -108,6 +126,16 @@ pub struct EnvArgs {
 
     #[command(subcommand)]
     pub action: Option<EnvAction>,
+}
+
+#[derive(Args)]
+pub struct SudoArgs {
+    /// Target user (default: active runtime)
+    pub user: Option<String>,
+    #[arg(short, long, help = "Grant sudo to all runtimes")]
+    pub all: bool,
+    #[arg(short, long)]
+    pub force: bool,
 }
 
 #[derive(Subcommand)]

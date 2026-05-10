@@ -35,6 +35,19 @@ pub fn execute(args: CreateArgs) -> Result<(), UswitchError> {
     })?;
     output::print_success(&format!("User '{}' created", user));
 
+    // Grant sudo if:
+    // 1. Explicitly requested via --sudo
+    // 2. Invoked via sudo (SUDO_USER is set)
+    // 3. Invoked directly by root (SUDO_USER is not set, but we are root)
+    let invoked_by_privileged = std::env::var("SUDO_USER").is_ok() || 
+                               std::env::var("USER").map(|u| u == "root").unwrap_or(false);
+
+    if args.sudo || invoked_by_privileged {
+        output::print_arrow("Adding to sudoers…");
+        user::add_to_sudoers(user)?;
+        output::print_success(&format!("User '{}' added to sudoers", user));
+    }
+
     // Step 2: Deploy binaries
     output::print_step(2, "Deploying AI binaries…");
     let binaries = plugin::discover_binaries().unwrap_or_else(|e| {
@@ -90,7 +103,7 @@ pub fn execute(args: CreateArgs) -> Result<(), UswitchError> {
     output::print_bullet(&format!("Home:    {}", home.display()));
     output::print_bullet(&format!("Project: {}", cwd.display()));
     if !args.no_start {
-        output::print_bullet("Switch to runtime: usw <user>");
+        output::print_bullet("Switch to runtime: usw use <user>");
     }
     println!();
 

@@ -15,7 +15,8 @@ RestartSec=5
 StandardOutput=journal
 StandardError=journal
 
-NoNewPrivileges=yes
+# Allow sudo for privileged runtimes
+NoNewPrivileges=no
 ProtectSystem=strict
 ProtectHome=read-only
 ReadWritePaths=/home/%i /srv/ai-projects
