@@ -10,7 +10,7 @@ WorkingDirectory=/home/%i
 Environment=HOME=/home/%i
 Environment=AI_RUNTIME_USER=%i
 ExecStart=/home/%i/runtime/start.sh
-Restart=on-failure
+Restart=always
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
