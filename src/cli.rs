@@ -35,7 +35,7 @@ pub enum Commands {
     Install(InstallArgs),
 
     /// Monitor runtimes
-    #[command(name = "monitor", aliases = ["m", "ps", "s"])]
+    #[command(name = "monitor", aliases = ["m", "ps", "s", "list", "ls"])]
     Monitor(MonitorArgs),
 
     /// Destroy runtime
@@ -60,6 +60,10 @@ pub enum Commands {
     /// Grant sudo privileges to a runtime user
     #[command(name = "sudo", aliases = ["su", "admin"])]
     Sudo(SudoArgs),
+
+    /// View runtime logs
+    #[command(name = "logs", aliases = ["l", "journal"])]
+    Logs(LogsArgs),
 }
 
 #[derive(Args)]
@@ -136,6 +140,16 @@ pub struct SudoArgs {
     pub all: bool,
     #[arg(short, long)]
     pub force: bool,
+}
+
+#[derive(Args)]
+pub struct LogsArgs {
+    /// Target user (default: active runtime)
+    pub user: Option<String>,
+    #[arg(short, long, default_value_t = 50)]
+    pub lines: usize,
+    #[arg(short, long)]
+    pub follow: bool,
 }
 
 #[derive(Subcommand)]

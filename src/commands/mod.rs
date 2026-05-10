@@ -7,6 +7,7 @@ mod purge;
 mod monitor;
 mod env;
 mod sudo;
+mod logs;
 
 use crate::cli::Commands;
 
@@ -23,5 +24,6 @@ pub fn dispatch(cmd: Commands) -> anyhow::Result<()> {
         Commands::Env(args) => env::execute(args).map_err(|e| anyhow::anyhow!(e)),
         Commands::Current => crate::switch::current(),
         Commands::Sudo(args) => sudo::execute(args).map_err(|e| anyhow::anyhow!(e)),
+        Commands::Logs(args) => logs::execute(args).map_err(|e| anyhow::anyhow!(e)),
     }
 }
