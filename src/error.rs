@@ -17,6 +17,9 @@ pub enum UswitchError {
     #[error("runtime '{0}' is not running")]
     NotRunning(String),
 
+    #[error("runtime '{0}' not found")]
+    RuntimeNotFound(String),
+
     #[error("project '{0}' not found")]
     ProjectNotFound(String),
 
